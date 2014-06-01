@@ -28,14 +28,35 @@ def setup_screen(width, height):
     ISCREEN_WIDTH = width / PIXEL_RATIO
     SCREEN_X_OFFSET = (SCREEN_WIDTH - (ISCREEN_WIDTH * PIXEL_RATIO)) / 2
     SCREEN_Y_OFFSET = (SCREEN_HEIGHT - (ISCREEN_HEIGHT * PIXEL_RATIO)) / 2
-    return pygame.display.set_mode([width, height]), \
-        pygame.Surface([ISCREEN_WIDTH, ISCREEN_HEIGHT])
+    return pygame.display.set_mode([width, height], pygame.SRCALPHA, 32), \
+        pygame.Surface([ISCREEN_WIDTH, ISCREEN_HEIGHT], pygame.SRCALPHA, 32)
 
 def flip_display(iscreen, screen):
     screen.blit(pygame.transform.scale(iscreen, \
         [ISCREEN_WIDTH * PIXEL_RATIO, ISCREEN_HEIGHT * PIXEL_RATIO]), \
         [SCREEN_X_OFFSET, SCREEN_Y_OFFSET])
     pygame.display.flip()
+
+def draw_map():
+    tile_width = 32
+    tile_height = 16
+    map_dimension = 10
+    map_surface = pygame.Surface([map_dimension * tile_width, \
+        map_dimension * tile_height], pygame.SRCALPHA, 32)
+    tile_nw = pygame.image.load('images/tiles/dirt_nw.png').convert_alpha()
+    tile_ne = pygame.image.load('images/tiles/dirt_ne.png').convert_alpha()
+    tile_sw = pygame.image.load('images/tiles/dirt_sw.png').convert_alpha()
+    tile_se = pygame.image.load('images/tiles/dirt_se.png').convert_alpha()
+    for i in range(0, 10):
+        for j in range (0, 10):
+            x = ((9 - j) * tile_width / 2) + (i * tile_width / 2)
+            y = (i * tile_height / 2) - ((9 - j) * tile_height / 2) + \
+                (map_dimension * tile_height / 2 - tile_height / 2)
+            map_surface.blit(tile_nw, [x, y])
+            map_surface.blit(tile_ne, [x + tile_width / 2, y])
+            map_surface.blit(tile_sw, [x, y + tile_height / 2])
+            map_surface.blit(tile_se, [x + tile_width / 2, y + tile_height / 2])
+    return map_surface
 
 def main():
     quit = False
@@ -58,6 +79,7 @@ def main():
                x += 1
            y += 1
 
+        iscreen.blit(draw_map(), [0, 0])
         flip_display(iscreen, screen)
 
     sys.exit()

@@ -47,10 +47,10 @@ def draw_map():
     tile_ne = pygame.image.load('images/tiles/dirt_ne.png').convert_alpha()
     tile_sw = pygame.image.load('images/tiles/dirt_sw.png').convert_alpha()
     tile_se = pygame.image.load('images/tiles/dirt_se.png').convert_alpha()
-    for i in range(0, 10):
-        for j in range (0, 10):
-            x = ((9 - j) * tile_width / 2) + (i * tile_width / 2)
-            y = (i * tile_height / 2) - ((9 - j) * tile_height / 2) + \
+    for i in range(0, map_dimension):
+        for j in range (0, map_dimension):
+            x = ((map_dimension -1 - j) * tile_width / 2) + (i * tile_width / 2)
+            y = (i * tile_height / 2) - ((map_dimension - 1 - j) * tile_height / 2) + \
                 (map_dimension * tile_height / 2 - tile_height / 2)
             map_surface.blit(tile_nw, [x, y])
             map_surface.blit(tile_ne, [x + tile_width / 2, y])

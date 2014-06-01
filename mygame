@@ -38,6 +38,7 @@ def flip_display(iscreen, screen):
     pygame.display.flip()
 
 def draw_map():
+    #todo: move all the loading to a one-time function
     tile_width = 32
     tile_height = 16
     map_dimension = 10
@@ -63,21 +64,14 @@ def main():
     pygame.init()
     screen, iscreen = setup_screen(SCREEN_WIDTH, SCREEN_HEIGHT)
     clock = pygame.time.Clock()
-    tile = pygame.image.load('images/tiles/grass.png').convert_alpha()
 
     while not quit:
         time_passed = clock.tick(50)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT: quit = True
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q: pygame.event.post(pygame.event.Event(pygame.QUIT))
-        y = 0
-        while y <= ISCREEN_HEIGHT / 10:
-           x = 0
-           while x <= ISCREEN_WIDTH / 10:
-               iscreen.blit(tile, [x * 10, y * 10])
-               x += 1
-           y += 1
 
         iscreen.blit(draw_map(), [0, 0])
         flip_display(iscreen, screen)

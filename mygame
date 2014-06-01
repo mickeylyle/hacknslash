@@ -60,7 +60,6 @@ def main():
 
         flip_display(iscreen, screen)
 
-    print LALALA
     sys.exit()
 
 main()

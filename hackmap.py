@@ -14,7 +14,7 @@ class hackmap:
                 self.tileset[line.split('=')[0]] = hacktile(line.split('=')[1])
             elif ':' not in line and len(line) > 1:
                 chars = []
-                for c in line:
+                for c in line.split(','):
                     chars.append(c)
                 self.mapset.append(chars)
 
@@ -37,7 +37,6 @@ class hackmap:
             y = y - self.tileset[self.mapset[j][i]].image.get_height() + tile_height
             x = x - self.tileset[self.mapset[j][i]].image.get_width() / 2 + tile_width / 2
             map_surface.blit(self.tileset[self.mapset[j][i]].image, [x, y])
-            print "i: " + str(i) + " j: " + str(j)
             if j == map_dimension - 1:
                 j = i + 1
                 i = map_dimension - 1

@@ -1,6 +1,6 @@
+base none
 walkable True
 swimmable False
 flyable True
 blocksLOS False
-collide_event none
-action_event none
+event none

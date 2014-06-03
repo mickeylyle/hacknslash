@@ -4,18 +4,18 @@ from hacktile import hacktile
 class hackmap:
     def __init__(self, mapfile):
         self.title = mapfile
-        self.tileset = []
+        self.tileset = {}
         self.mapset = []
         with open("maps/" + mapfile + ".map", "r") as myfile:
             data = myfile.readlines()
         for line in data:
             line = line.replace("\n", "")
             if '=' in line:
-                self.tileset.append(hacktile(line.split('=')[1]))
+                self.tileset[line.split('=')[0]] = hacktile(line.split('=')[1])
             elif ':' not in line and len(line) > 1:
                 chars = []
                 for c in line:
-                    chars.append(int(c))
+                    chars.append(c)
                 self.mapset.append(chars)
 
     def draw(self):
@@ -26,11 +26,16 @@ class hackmap:
             map_dimension * tile_height], pygame.SRCALPHA, 32)
         for i in range(0, map_dimension):
             for j in range (0, map_dimension):
-                x = ((map_dimension -1 - j) * tile_width / 2) + (i * tile_width / 2)
-                y = (i * tile_height / 2) - ((map_dimension - 1 - j) * tile_height / 2) + \
+
+                # draw tile
+                x = (j * tile_width / 2) + (i * tile_width / 2)
+                y = (i * tile_height / 2) - (j * tile_height / 2) + \
                     (map_dimension * tile_height / 2 - tile_height / 2)
-                map_surface.blit(self.tileset[self.mapset[i][j]].nw, [x, y])
-                map_surface.blit(self.tileset[self.mapset[i][j]].ne, [x + tile_width / 2, y])
-                map_surface.blit(self.tileset[self.mapset[i][j]].sw, [x, y + tile_height / 2])
-                map_surface.blit(self.tileset[self.mapset[i][j]].se, [x + tile_width / 2, y + tile_height / 2])
+                if self.tileset[self.mapset[i][j]].properties['base'] != "none":
+                    for key in self.tileset:
+                        if self.tileset[key].name == self.tileset[self.mapset[i][j]].properties['base']:
+                            map_surface.blit(self.tileset[key].image, [x, y])
+                y = y - self.tileset[self.mapset[i][j]].image.get_height() + tile_height
+                x = x - self.tileset[self.mapset[i][j]].image.get_width() / 2 + tile_width / 2
+                map_surface.blit(self.tileset[self.mapset[i][j]].image, [x, y])
         return map_surface

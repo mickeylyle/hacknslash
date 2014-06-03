@@ -33,6 +33,7 @@ def setup_screen(width, height):
         pygame.Surface([ISCREEN_WIDTH, ISCREEN_HEIGHT], pygame.SRCALPHA, 32)
 
 def flip_display(iscreen, screen):
+    screen.fill((0,0,0))
     screen.blit(pygame.transform.scale(iscreen, \
         [ISCREEN_WIDTH * PIXEL_RATIO, ISCREEN_HEIGHT * PIXEL_RATIO]), \
         [SCREEN_X_OFFSET, SCREEN_Y_OFFSET])

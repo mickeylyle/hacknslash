@@ -1,5 +1,5 @@
-base none
-walkable True
+base grass
+walkable False
 swimmable False
 flyable True
 blocksLOS False

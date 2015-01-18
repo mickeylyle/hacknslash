@@ -22,13 +22,13 @@ class hackmap:
         tile_width = 32
         tile_height = 16
         map_dimension = len(self.mapset)
-        map_surface = pygame.Surface([map_dimension * tile_width, \
-            map_dimension * tile_height], pygame.SRCALPHA, 32)
+        map_surface = pygame.Surface([map_dimension * tile_width + 10, \
+            map_dimension * tile_height + 10], pygame.SRCALPHA, 32)
         i = 0
         j = 0
         while i != map_dimension and j != map_dimension:
-            y = (j * tile_height / 2) + (i * tile_width / 4)
-            x = (i * tile_width / 2) - (j * tile_width / 2) + ((map_dimension-1) * tile_width / 2)
+            y = (j * tile_height / 2) + (i * tile_width / 4) + 10
+            x = (i * tile_width / 2) - (j * tile_width / 2) + ((map_dimension-1) * tile_width / 2) + 10
             if self.tileset[self.mapset[j][i]].properties['base'] != "none":
                 for key in self.tileset:
                     if self.tileset[key].name == \

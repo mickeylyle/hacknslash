@@ -4,61 +4,73 @@ import pygame
 import sys
 from hackmap import hackmap
 
-#defaults, all of this gets set in setup_screen
-SCREEN_WIDTH = 1020
-SCREEN_HEIGHT = 720
-PIXEL_HEIGHT = 240
-PIXEL_RATIO = 1
-ISCREEN_WIDTH = 320
-ISCREEN_HEIGHT = 240
-SCREEN_X_OFFSET = 0
-SCREEN_Y_OFFSET = 0
+class HackNSlash:
 
-def setup_screen(width, height):
-    global SCREEN_WIDTH
-    global SCREEN_HEIGHT
-    global PIXEL_RATIO
-    global ISCREEN_HEIGHT
-    global ISCREEN_WIDTH
-    global SCREEN_X_OFFSET
-    global SCREEN_Y_OFFSET
-    SCREEN_WIDTH = width
-    SCREEN_HEIGHT = height
-    PIXEL_RATIO = height / PIXEL_HEIGHT
-    ISCREEN_HEIGHT = PIXEL_HEIGHT + ((height % PIXEL_HEIGHT) / PIXEL_RATIO)
-    ISCREEN_WIDTH = width / PIXEL_RATIO
-    SCREEN_X_OFFSET = (SCREEN_WIDTH - (ISCREEN_WIDTH * PIXEL_RATIO)) / 2
-    SCREEN_Y_OFFSET = (SCREEN_HEIGHT - (ISCREEN_HEIGHT * PIXEL_RATIO)) / 2
-    return pygame.display.set_mode([width, height], pygame.SRCALPHA, 32), \
-        pygame.Surface([ISCREEN_WIDTH, ISCREEN_HEIGHT], pygame.SRCALPHA, 32)
+    def __init__(self):
+        self.SCREEN_WIDTH = 1020
+        self.SCREEN_HEIGHT = 720
+        self.PIXEL_HEIGHT = 240
+        self.PIXEL_RATIO = 1
+        self.ISCREEN_WIDTH = 320
+        self.ISCREEN_HEIGHT = 240
+        self.SCREEN_X_OFFSET = 0
+        self.SCREEN_Y_OFFSET = 0
+        self.camera_x_position = 0
+        self.camera_y_position = 0
+        self.quit = False
+        self.screen, self.iscreen = self.setup_screen(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
+        self.clock = pygame.time.Clock()
+        self.main_map = hackmap("main")
+        self.map_surface = self.main_map.draw()
 
-def flip_display(iscreen, screen):
-    screen.blit(pygame.transform.scale(iscreen, \
-        [ISCREEN_WIDTH * PIXEL_RATIO, ISCREEN_HEIGHT * PIXEL_RATIO]), \
-        [SCREEN_X_OFFSET, SCREEN_Y_OFFSET])
-    pygame.display.flip()
+    def setup_screen(self, width, height):
+        self.SCREEN_WIDTH = width
+        self.SCREEN_HEIGHT = height
+        self.PIXEL_RATIO = height / self.PIXEL_HEIGHT
+        self.ISCREEN_HEIGHT = self.PIXEL_HEIGHT + ((height % self.PIXEL_HEIGHT) / self.PIXEL_RATIO)
+        self.ISCREEN_WIDTH = width / self.PIXEL_RATIO
+        self.SCREEN_X_OFFSET = (self.SCREEN_WIDTH - (self.ISCREEN_WIDTH * self.PIXEL_RATIO)) / 2
+        self.SCREEN_Y_OFFSET = (self.SCREEN_HEIGHT - (self.ISCREEN_HEIGHT * self.PIXEL_RATIO)) / 2
+        return pygame.display.set_mode([width, height], pygame.SRCALPHA, 32), \
+            pygame.Surface([self.ISCREEN_WIDTH, self.ISCREEN_HEIGHT], pygame.SRCALPHA, 32)
+
+    def draw_scene(self):
+        self.iscreen.fill((0,0,0))
+        self.iscreen.blit(self.map_surface, [self.camera_x_position, self.camera_y_position])
+
+    def flip_display(self, iscreen, screen):
+        screen.blit(pygame.transform.scale(iscreen, \
+            [self.ISCREEN_WIDTH * self.PIXEL_RATIO, self.ISCREEN_HEIGHT * self.PIXEL_RATIO]), \
+            [self.SCREEN_X_OFFSET, self.SCREEN_Y_OFFSET])
+        pygame.display.flip()
+
+    def handle_input(self, buttons):
+        def move_up(): self.camera_y_position += 1
+        def move_down(): self.camera_y_position -= 1
+        def move_left(): self.camera_x_position += 1
+        def move_right(): self.camera_x_position -= 1
+        if buttons[pygame.K_q]: pygame.event.post(pygame.event.Event(pygame.QUIT))
+        if buttons[pygame.K_UP]: move_up()
+        if buttons[pygame.K_DOWN]: move_down()
+        if buttons[pygame.K_LEFT]: move_left()
+        if buttons[pygame.K_RIGHT]: move_right()
+
+
+    def loop(self):
+        while not self.quit:
+            time_passed = self.clock.tick(100)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT: self.quit = True
+            self.handle_input(pygame.key.get_pressed())
+            self.draw_scene()
+            self.flip_display(self.iscreen, self.screen)
+        pygame.quit()
+        sys.exit()
 
 def main():
-    quit = False
     pygame.init()
-    screen, iscreen = setup_screen(SCREEN_WIDTH, SCREEN_HEIGHT)
-    clock = pygame.time.Clock()
-
-    main_map = hackmap("main")
-    map_surface = main_map.draw()
-
-    while not quit:
-        time_passed = clock.tick(50)
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT: quit = True
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q: pygame.event.post(pygame.event.Event(pygame.QUIT))
-
-        iscreen.fill((0,0,0))
-        iscreen.blit(map_surface, [0, 0])
-        flip_display(iscreen, screen)
-
-    sys.exit()
+    game_object = HackNSlash()
+    game_object.loop()
 
 main()

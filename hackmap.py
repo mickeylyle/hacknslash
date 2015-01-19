@@ -41,6 +41,9 @@ class hackmap:
         tile_y = int(math.floor((iso_y / iso_plane_dimension) * self.map_dimension))
         return [tile_x, tile_y]
 
+    def get_tile_properties(self, tile_x, tile_y):
+        return self.tileset[self.mapset[tile_y][tile_x]].properties
+
     def draw(self):
         map_surface = pygame.Surface([self.map_dimension * self.tile_width + self.buffer, \
             self.map_dimension * self.tile_height + self.buffer], pygame.SRCALPHA, 32)
@@ -52,7 +55,7 @@ class hackmap:
                 ((self.map_dimension-1) * self.tile_width / 2) + 10
             if self.tileset[self.mapset[j][i]].properties['base'] != "none":
                 for key in self.tileset:
-                    if self.tileset[key].name == \
+                    if self.tileset[key].properties["name"] == \
                         self.tileset[self.mapset[j][i]].properties['base']:
                         map_surface.blit(self.tileset[key].image, [x, y])
             y = y - self.tileset[self.mapset[j][i]].image.get_height() + self.tile_height

@@ -83,10 +83,13 @@ class HackNSlash:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: self.quit = True
             self.handle_input(pygame.key.get_pressed())
-            self.draw_scene()
-            self.flip_display(self.iscreen, self.screen)
             coords = self.player.get_tile_position()
             self.debug.set_value("tile XY", str(coords[0]) + ", " + str(coords[1]))
+            current_tile_properties = self.main_map.get_tile_properties(coords[0], coords[1])
+            for key in current_tile_properties:
+                self.debug.set_value("tile " + str(key), str(current_tile_properties[key]))
+            self.draw_scene()
+            self.flip_display(self.iscreen, self.screen)
         pygame.quit()
         sys.exit()
 

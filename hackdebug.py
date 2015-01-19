@@ -19,9 +19,12 @@ class hackdebug:
         return lines
 
     def render_it(self):
-        self.surface = pygame.Surface([self.game.SCREEN_WIDTH, self.game.SCREEN_HEIGHT], pygame.SRCALPHA, 32)
+        self.surface = pygame.Surface([self.game.SCREEN_WIDTH, \
+            self.game.SCREEN_HEIGHT], pygame.SRCALPHA, 32)
         text = self.text_lines()
         for line in text:
-            self.surface.blit(self.font.render(line, True, self.shadow_color), [11, (15 * (text.index(line) + 1) - 4)])
-            self.surface.blit(self.font.render(line, True, self.color), [10, (15 * (text.index(line) + 1) - 5)])
+            self.surface.blit(self.font.render(line, True, self.shadow_color), \
+                [11, (15 * (text.index(line) + 1) - 4)])
+            self.surface.blit(self.font.render(line, True, self.color), \
+                [10, (15 * (text.index(line) + 1) - 5)])
         return self.surface

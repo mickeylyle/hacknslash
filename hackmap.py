@@ -48,7 +48,8 @@ class hackmap:
         j = 0
         while i != self.map_dimension and j != self.map_dimension:
             y = (j * self.tile_height / 2) + (i * self.tile_width / 4) + 10
-            x = (i * self.tile_width / 2) - (j * self.tile_width / 2) + ((self.map_dimension-1) * self.tile_width / 2) + 10
+            x = (i * self.tile_width / 2) - (j * self.tile_width / 2) + \
+                ((self.map_dimension-1) * self.tile_width / 2) + 10
             if self.tileset[self.mapset[j][i]].properties['base'] != "none":
                 for key in self.tileset:
                     if self.tileset[key].name == \

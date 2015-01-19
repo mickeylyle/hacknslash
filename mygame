@@ -40,7 +40,8 @@ class HackNSlash:
         # figure out what ratio we will have to scale things
         self.PIXEL_RATIO = height / self.PIXEL_HEIGHT
         # make the iscreen height into a factor of the screen height
-        self.ISCREEN_HEIGHT = self.PIXEL_HEIGHT + ((self.SCREEN_HEIGHT % self.PIXEL_HEIGHT) / self.PIXEL_RATIO)
+        self.ISCREEN_HEIGHT = self.PIXEL_HEIGHT + \
+            ((self.SCREEN_HEIGHT % self.PIXEL_HEIGHT) / self.PIXEL_RATIO)
         # make the iscreen width into a factor of the width
         self.ISCREEN_WIDTH = self.SCREEN_WIDTH / self.PIXEL_RATIO
         # offsets help us center the rendered iscreen when we put it onto the game window
@@ -51,7 +52,8 @@ class HackNSlash:
 
     def draw_scene(self):
         self.iscreen.fill((0,0,0))
-        self.iscreen.blit(self.map_surface, [(self.camera_x_position + self.main_map.buffer) * -1, (self.camera_y_position + self.main_map.buffer) * -1])
+        self.iscreen.blit(self.map_surface, [(self.camera_x_position + \
+            self.main_map.buffer) * -1, (self.camera_y_position + self.main_map.buffer) * -1])
         self.iscreen.blit(self.player.image, [self.ISCREEN_WIDTH / 2, self.ISCREEN_HEIGHT / 2])
 
     def flip_display(self, iscreen, screen):

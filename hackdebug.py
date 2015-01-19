@@ -14,7 +14,10 @@ class hackdebug:
         return [self.title,
                 "Tile: [" + self.tile_x + ", " + self.tile_y + "] <- this is broken",
                 "Player XY: " + str(self.game.player.get_x_position()) + ", " + str(self.game.player.get_y_position()),
-                "Camera XY: " + str(self.game.camera_x_position) + ", " + str(self.game.camera_y_position)]
+                "Camera XY: " + str(self.game.camera_x_position) + ", " + str(self.game.camera_y_position),
+                "Screen size: " + str(self.game.SCREEN_WIDTH) + " x " + str(self.game.SCREEN_HEIGHT),
+                "iScreen size: " + str(self.game.ISCREEN_WIDTH) + " x " + str(self.game.ISCREEN_HEIGHT),
+                "offset size: " + str(self.game.SCREEN_X_OFFSET) + " x " + str(self.game.SCREEN_Y_OFFSET)]
 
     def render_it(self):
         self.surface = pygame.Surface([self.game.SCREEN_WIDTH, self.game.SCREEN_HEIGHT], pygame.SRCALPHA, 32)

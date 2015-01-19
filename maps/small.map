@@ -1,0 +1,8 @@
+tileset:
+0=dirt
+1=grass
+
+map:
+1,0,1
+0,1,0
+1,0,1

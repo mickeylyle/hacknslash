@@ -23,9 +23,13 @@ class hackmap:
 
     def get_tile_from_xy(self, x_pos, y_pos):
         # this is completely broken
-        tile_x = y_pos / self.tile_height + x_pos / (2 * self.tile_width)
-        tile_y = y_pos / self.tile_height - x_pos / (2 * self.tile_width)
+        tile_x = (y_pos / self.tile_height) + (x_pos / self.tile_width)
+        tile_y = (x_pos / self.tile_width) - (y_pos / self.tile_height)
         return [tile_x, tile_y]
+    
+    def get_xy_from_tile(self, tile_x, tile_y):
+        # unimplemented
+        return [0, 0]
 
     def draw(self):
         map_dimension = len(self.mapset)

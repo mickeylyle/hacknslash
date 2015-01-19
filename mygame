@@ -9,30 +9,41 @@ from hackdebug import hackdebug
 class HackNSlash:
 
     def __init__(self):
+        # actual game window resolution
         self.SCREEN_WIDTH = 1024
         self.SCREEN_HEIGHT = 768
+        # ideal height of the internal screen
         self.PIXEL_HEIGHT = 240
+        # the following get reset when the screen is setup
         self.PIXEL_RATIO = 1
-        self.ISCREEN_WIDTH = 320
-        self.ISCREEN_HEIGHT = 240
+        self.ISCREEN_WIDTH = 0
+        self.ISCREEN_HEIGHT = 0
         self.SCREEN_X_OFFSET = 0
         self.SCREEN_Y_OFFSET = 0
         self.camera_x_position = 0
         self.camera_y_position = 0
+        # some defaults
         self.debug = hackdebug(self)
         self.quit = False
+        
+        # actually get to work here
         self.screen, self.iscreen = self.setup_screen(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
         self.clock = pygame.time.Clock()
-        self.main_map = hackmap("main")
+        self.main_map = hackmap("small")
         self.map_surface = self.main_map.draw()
         self.player = hackplayer(self)
 
     def setup_screen(self, width, height):
+        # these two lines just set the game window size
         self.SCREEN_WIDTH = width
         self.SCREEN_HEIGHT = height
+        # figure out what ratio we will have to scale things
         self.PIXEL_RATIO = height / self.PIXEL_HEIGHT
-        self.ISCREEN_HEIGHT = self.PIXEL_HEIGHT + ((height % self.PIXEL_HEIGHT) / self.PIXEL_RATIO)
-        self.ISCREEN_WIDTH = width / self.PIXEL_RATIO
+        # make the iscreen height into a factor of the screen height
+        self.ISCREEN_HEIGHT = self.PIXEL_HEIGHT + ((self.SCREEN_HEIGHT % self.PIXEL_HEIGHT) / self.PIXEL_RATIO)
+        # make the iscreen width into a factor of the width
+        self.ISCREEN_WIDTH = self.SCREEN_WIDTH / self.PIXEL_RATIO
+        # offsets help us center the rendered iscreen when we put it onto the game window
         self.SCREEN_X_OFFSET = (self.SCREEN_WIDTH - (self.ISCREEN_WIDTH * self.PIXEL_RATIO)) / 2
         self.SCREEN_Y_OFFSET = (self.SCREEN_HEIGHT - (self.ISCREEN_HEIGHT * self.PIXEL_RATIO)) / 2
         return pygame.display.set_mode([width, height], pygame.SRCALPHA, 32), \

@@ -1,8 +1,10 @@
 import pygame
+import math
 from hacktile import hacktile
 
 class hackmap:
-    def __init__(self, mapfile):
+    def __init__(self, game, mapfile):
+        self.game = game
         self.title = mapfile
         self.tileset = {}
         self.mapset = []
@@ -20,26 +22,33 @@ class hackmap:
                 for c in line.split(','):
                     chars.append(c)
                 self.mapset.append(chars)
+        self.map_dimension = len(self.mapset)
+
+    def get_xy_from_tile(self, tile_x, tile_y):
+        x_pos = (tile_x + self.map_dimension - tile_y - 1) * self.tile_width / 2
+        y_pos = (tile_y + tile_x) * self.tile_height / 2
+        return [x_pos, y_pos]
 
     def get_tile_from_xy(self, x_pos, y_pos):
-        # this is completely broken
-        tile_x = (y_pos / self.tile_height) + (x_pos / self.tile_width)
-        tile_y = (x_pos / self.tile_width) - (y_pos / self.tile_height)
+        map_width = self.map_dimension * self.tile_width
+        iso_plane_dimension = math.sqrt(2 * (math.pow((map_width / 2),2)))
+        y_pos *= 2
+        x_leg = math.sqrt((math.pow(x_pos, 2)) / 2)
+        y_leg = math.sqrt((math.pow(y_pos, 2)) / 2)
+        iso_x = y_leg + x_leg - (iso_plane_dimension / 2)
+        iso_y = y_leg - x_leg + (iso_plane_dimension / 2)
+        tile_x = int(math.floor((iso_x / iso_plane_dimension) * self.map_dimension))
+        tile_y = int(math.floor((iso_y / iso_plane_dimension) * self.map_dimension))
         return [tile_x, tile_y]
-    
-    def get_xy_from_tile(self, tile_x, tile_y):
-        # unimplemented
-        return [0, 0]
 
     def draw(self):
-        map_dimension = len(self.mapset)
-        map_surface = pygame.Surface([map_dimension * self.tile_width + self.buffer, \
-            map_dimension * self.tile_height + self.buffer], pygame.SRCALPHA, 32)
+        map_surface = pygame.Surface([self.map_dimension * self.tile_width + self.buffer, \
+            self.map_dimension * self.tile_height + self.buffer], pygame.SRCALPHA, 32)
         i = 0
         j = 0
-        while i != map_dimension and j != map_dimension:
+        while i != self.map_dimension and j != self.map_dimension:
             y = (j * self.tile_height / 2) + (i * self.tile_width / 4) + 10
-            x = (i * self.tile_width / 2) - (j * self.tile_width / 2) + ((map_dimension-1) * self.tile_width / 2) + 10
+            x = (i * self.tile_width / 2) - (j * self.tile_width / 2) + ((self.map_dimension-1) * self.tile_width / 2) + 10
             if self.tileset[self.mapset[j][i]].properties['base'] != "none":
                 for key in self.tileset:
                     if self.tileset[key].name == \
@@ -48,9 +57,9 @@ class hackmap:
             y = y - self.tileset[self.mapset[j][i]].image.get_height() + self.tile_height
             x = x - self.tileset[self.mapset[j][i]].image.get_width() / 2 + self.tile_width / 2
             map_surface.blit(self.tileset[self.mapset[j][i]].image, [x, y])
-            if j == map_dimension - 1:
+            if j == self.map_dimension - 1:
                 j = i + 1
-                i = map_dimension - 1
+                i = self.map_dimension - 1
             elif i == 0:
                 i = j + 1
                 j = 0

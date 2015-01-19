@@ -29,7 +29,7 @@ class HackNSlash:
         # actually get to work here
         self.screen, self.iscreen = self.setup_screen(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
         self.clock = pygame.time.Clock()
-        self.main_map = hackmap("small")
+        self.main_map = hackmap(self, "main")
         self.map_surface = self.main_map.draw()
         self.player = hackplayer(self)
 
@@ -84,8 +84,7 @@ class HackNSlash:
             self.draw_scene()
             self.flip_display(self.iscreen, self.screen)
             coords = self.player.get_tile_position()
-            self.debug.tile_x = str(coords[0])
-            self.debug.tile_y = str(coords[1])
+            self.debug.set_value("tile XY", str(coords[0]) + ", " + str(coords[1]))
         pygame.quit()
         sys.exit()
 

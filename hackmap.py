@@ -39,7 +39,7 @@ class hackmap:
         # figure out the distances when they're at angles
         x_leg = math.sqrt((math.pow(x_pos, 2)) / 2)
         y_leg = math.sqrt((math.pow(y_pos, 2)) / 2)
-        # combine those distances and factore in the different origin
+        # combine those distances and factor in the different origin
         iso_x = y_leg + x_leg - (iso_plane_dimension / 2)
         iso_y = y_leg - x_leg + (iso_plane_dimension / 2)
         # use the ratio of the iso coord to the iso size to get the tile

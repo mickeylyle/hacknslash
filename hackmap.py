@@ -30,13 +30,19 @@ class hackmap:
         return [x_pos, y_pos]
 
     def get_tile_from_xy(self, x_pos, y_pos):
+        # figure out the width of the isometric projection
         map_width = self.map_dimension * self.tile_width
+        # figure out the width of the isometric projection when it's rotated
         iso_plane_dimension = math.sqrt(2 * (math.pow((map_width / 2),2)))
+        # scale our y-value so it's useful
         y_pos *= 2
+        # figure out the distances when they're at angles
         x_leg = math.sqrt((math.pow(x_pos, 2)) / 2)
         y_leg = math.sqrt((math.pow(y_pos, 2)) / 2)
+        # combine those distances and factore in the different origin
         iso_x = y_leg + x_leg - (iso_plane_dimension / 2)
         iso_y = y_leg - x_leg + (iso_plane_dimension / 2)
+        # use the ratio of the iso coord to the iso size to get the tile
         tile_x = int(math.floor((iso_x / iso_plane_dimension) * self.map_dimension))
         tile_y = int(math.floor((iso_y / iso_plane_dimension) * self.map_dimension))
         return [tile_x, tile_y]

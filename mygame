@@ -20,18 +20,18 @@ class HackNSlash:
         self.ISCREEN_HEIGHT = 0
         self.SCREEN_X_OFFSET = 0
         self.SCREEN_Y_OFFSET = 0
-        self.camera_x_position = 0
-        self.camera_y_position = 0
         # some defaults
         self.debug = hackdebug(self)
         self.quit = False
+        self.INIT_MAP = "main"
+        self.INIT_PLAYER_LOCATION = [3, 3]
         
         # actually get to work here
         self.screen, self.iscreen = self.setup_screen(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
         self.clock = pygame.time.Clock()
-        self.main_map = hackmap(self, "main")
+        self.main_map = hackmap(self, self.INIT_MAP)
         self.map_surface = self.main_map.draw()
-        self.player = hackplayer(self)
+        self.player = hackplayer(self, 3, 3)
 
     def setup_screen(self, width, height):
         # these two lines just set the game window size
@@ -52,9 +52,13 @@ class HackNSlash:
 
     def draw_scene(self):
         self.iscreen.fill((0,0,0))
-        self.iscreen.blit(self.map_surface, [(self.camera_x_position + \
-            self.main_map.buffer) * -1, (self.camera_y_position + self.main_map.buffer) * -1])
+        self.iscreen.blit(self.map_surface, self.get_camera_coords())
         self.iscreen.blit(self.player.image, [self.ISCREEN_WIDTH / 2, self.ISCREEN_HEIGHT / 2])
+
+    def get_camera_coords(self):
+        x = (int(self.player.position[0]) - (self.ISCREEN_WIDTH / 2) + self.main_map.buffer) * -1
+        y = (int(self.player.position[1]) - (self.ISCREEN_HEIGHT / 2) + self.main_map.buffer) * -1
+        return [x, y]
 
     def flip_display(self, iscreen, screen):
         screen.blit(pygame.transform.scale(iscreen, \
@@ -64,17 +68,19 @@ class HackNSlash:
         pygame.display.flip()
 
     def handle_input(self, buttons):
-        def move_up(): self.camera_y_position -= 1
-        def move_down(): self.camera_y_position += 1
-        def move_left(): self.camera_x_position -= 1
-        def move_right(): self.camera_x_position += 1
-        if buttons[pygame.K_q]: pygame.event.post(pygame.event.Event(pygame.QUIT))
-        if buttons[pygame.K_UP]: move_up()
-        if buttons[pygame.K_DOWN]: move_down()
-        if buttons[pygame.K_LEFT]: move_left()
-        if buttons[pygame.K_RIGHT]: move_right()
-        if buttons[pygame.K_d]: self.debug.render = not self.debug.render
+        if buttons[pygame.K_UP] and buttons[pygame.K_RIGHT]: self.player.move_ne()
+        elif buttons[pygame.K_RIGHT] and buttons[pygame.K_DOWN]: self.player.move_se()
+        elif buttons[pygame.K_DOWN] and buttons[pygame.K_LEFT]: self.player.move_sw()
+        elif buttons[pygame.K_LEFT] and buttons[pygame.K_UP]: self.player.move_nw()
+        elif buttons[pygame.K_UP]: self.player.move_n()
+        elif buttons[pygame.K_RIGHT]: self.player.move_e()
+        elif buttons[pygame.K_DOWN]: self.player.move_s()
+        elif buttons[pygame.K_LEFT]: self.player.move_w()
 
+
+    def handle_keydown(self, key):
+        if key == pygame.K_d: self.debug.render = not self.debug.render
+        elif key == pygame.K_q or key == pygame.K_ESCAPE: pygame.event.post(pygame.event.Event(pygame.QUIT))
 
     def loop(self):
         while not self.quit:
@@ -82,12 +88,14 @@ class HackNSlash:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: self.quit = True
+                elif event.type == pygame.KEYDOWN: self.handle_keydown(event.key)
             self.handle_input(pygame.key.get_pressed())
             coords = self.player.get_tile_position()
             self.debug.set_value("tile XY", str(coords[0]) + ", " + str(coords[1]))
-            current_tile_properties = self.main_map.get_tile_properties(coords[0], coords[1])
-            for key in current_tile_properties:
-                self.debug.set_value("tile " + str(key), str(current_tile_properties[key]))
+            self.debug.set_value("tile pixel location", str(self.main_map.get_xy_from_tile(coords[0], coords[1])))
+            #current_tile_properties = self.main_map.get_tile_properties(coords[0], coords[1])
+            #for key in current_tile_properties:
+            #    self.debug.set_value("tile " + str(key), str(current_tile_properties[key]))
             self.draw_scene()
             self.flip_display(self.iscreen, self.screen)
         pygame.quit()

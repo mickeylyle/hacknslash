@@ -23,32 +23,37 @@ class hackmap:
                     chars.append(c)
                 self.mapset.append(chars)
         self.map_dimension = len(self.mapset)
+        
+        # this is used by get_tile_from_xy()
+        self.iso_plane_dimension = math.sqrt(2 * (math.pow(((self.map_dimension * self.tile_width) / 2),2)))
 
     def get_xy_from_tile(self, tile_x, tile_y):
-        x_pos = (tile_x + self.map_dimension - tile_y - 1) * self.tile_width / 2
-        y_pos = (tile_y + tile_x) * self.tile_height / 2
+        x_pos = ((tile_x + self.map_dimension - tile_y - 1) * self.tile_width / 2) + self.tile_width / 2
+        y_pos = ((tile_y + tile_x) * self.tile_height / 2) + self.tile_height / 2
         return [x_pos, y_pos]
 
     def get_tile_from_xy(self, x_pos, y_pos):
-        # figure out the width of the isometric projection
-        map_width = self.map_dimension * self.tile_width
-        # figure out the width of the isometric projection when it's rotated
-        iso_plane_dimension = math.sqrt(2 * (math.pow((map_width / 2),2)))
-        # scale our y-value so it's useful
-        y_pos *= 2
-        # figure out the distances when they're at angles
+        # figure out the distances when they're at angles - scale the y value so it's useful
         x_leg = math.sqrt((math.pow(x_pos, 2)) / 2)
-        y_leg = math.sqrt((math.pow(y_pos, 2)) / 2)
+        if x_pos < 0: x_leg *= -1
+        y_leg = math.sqrt((math.pow(y_pos * 2, 2)) / 2)
+        if y_pos < 0: y_leg *= -1
         # combine those distances and factor in the different origin
-        iso_x = y_leg + x_leg - (iso_plane_dimension / 2)
-        iso_y = y_leg - x_leg + (iso_plane_dimension / 2)
+        iso_x = y_leg + x_leg - (self.iso_plane_dimension / 2)
+        iso_y = y_leg - x_leg + (self.iso_plane_dimension / 2)
         # use the ratio of the iso coord to the iso size to get the tile
-        tile_x = int(math.floor((iso_x / iso_plane_dimension) * self.map_dimension))
-        tile_y = int(math.floor((iso_y / iso_plane_dimension) * self.map_dimension))
+        tile_x = int(math.floor((iso_x / self.iso_plane_dimension) * self.map_dimension))
+        tile_y = int(math.floor((iso_y / self.iso_plane_dimension) * self.map_dimension))
         return [tile_x, tile_y]
 
     def get_tile_properties(self, tile_x, tile_y):
         return self.tileset[self.mapset[tile_y][tile_x]].properties
+    
+    def collide_pixel(self, x, y):
+        tile = self.get_tile_from_xy(x, y)
+        if tile[0] < 0 or tile[0] > self.map_dimension - 1 or tile[1] < 0 or tile[1] > self.map_dimension - 1:
+            return True
+        return not self.get_tile_properties(tile[0], tile[1])["walkable"]
 
     def draw(self):
         map_surface = pygame.Surface([self.map_dimension * self.tile_width + self.buffer, \

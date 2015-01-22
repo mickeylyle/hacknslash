@@ -16,7 +16,7 @@ pre {
 
 <body>
 
-<p>This is a solution for getting a tile coordinate from an (X, Y) coordinate.</p>
+<p>This is a solution for getting a tile coordinate from an (X, Y) coordinate. This may not be the most coherent read, I'll try to improve it in the future.</p>
 <p>The way the renderer works, the maps are laid out like this:
 <pre>1, 2, 3
 4, 5, 6
@@ -27,14 +27,14 @@ When the maps are rendered, tile #1 will be the top of the isometric diamond, ti
 <p>The red dot is the rendering origin, or the (0, 0) point on our rendered map surface. The green arrow refers to how many pixels to the right our (X, Y) coordinate is from the origin, or the X value. In our code this is the <b>x_pos</b> variable. The blue arrow refers to how many pixels down our point is from the origin, or the Y value. In our code, this is the <b>y_pos</b> variable. The dotted line is the width of the isometric projection, which is the <b>map_width</b> variable in our code.</p>
 <p>The first thing we are going to do is scale the rendered map surface, stretching it vertically by a factor of 2. This gives us a perfect square:</p>
 <p><img src="2.png"></p>
-<p>Note that our origin is still in the top left, and the X and Y values are still vertical lines. The Y value needs to be scaled the same way that we stretched the map surface though. The square on the outside is the map surface, the diamond on the insude is our isometric area. Next, we rotate the whole thing 45 degrees:</p>
+<p>Note that our origin is still in the top left, and the X and Y values are still vertical lines. The Y value needs to be scaled the same way that we stretched the map surface though. The square on the outside is the map surface, the diamond on the inside is our isometric area. Next, we rotate the whole thing 45 degrees:</p>
 <p><img src="3.png"></p>
 <p>Now some interesting things happened. The outer diamond is our map surface, and the square on the inside is our isometric area. The length of one of the sides of our isometric area can now be found by using the <b>map_width</b> variable, which is the dotted line, as the hypotenuse of a right triangle. We store this length as <b>iso_plane_dimension</b> in our code. This is the length of one of the sides of the inner square in this image. Our origin, the red dot, is now way off to the side. Our X and Y arrows are now diagonals instead of lines, which is a problem. But look at the isometric area. The top left corner, where the purple dot is, is now an isometric origin point for a measurement that we can use to figure out our isometric (X, Y) location. The orange arrow is our isometric X value, counted from the isometric origin. The yellow arrow is our isometric Y value, counted from the isometric origin.</p>
 <p>So how do we translate from screen (X, Y) to isometric (X, Y)?</p>
 <p>Take a look at the orange isometric X value. As our green X value and blue Y value increase, so does the orange isometric X value. But by how much? If the green arrow is the hypotenuse of a right triangle, the orange arrow increases by one of the legs of that triangle, plus one of the legs of the right triangle formed by the blue arrow. But the red and green arrows originate from a distance to the left of the purple origin point, so we need to subtract how far outside the isometric area that origin is. That value to subtract is half <b>iso_plane_dimension</b>.</p>
 <p>Now take a look at the yellow isometric Y value. As the green X value increases, the isometric Y value <i>decreases</i>, because it's moving upwards. As the blue Y value increases, the isometric Y value increases. And the red origin is below the purple one, so we need to add that difference.</p>
 <p>Now that we have isometric X and Y values, we can divide those by the isometric dimension to get a ratio of how far down and over the tile is. By multiplying the ratio by the map dimension and discarding the decimal, we get the tile's X and Y values in the mapset.</p>
-<p>The code ends up looking like this:</p>
+<p>The code ends up looking like this: (not that this code has been optimised a bit in the current version)</p>
 <pre>    def get_tile_from_xy(self, x_pos, y_pos):
 
         # figure out the width of the isometric projection
@@ -59,3 +59,6 @@ When the maps are rendered, tile #1 will be the top of the isometric diamond, ti
         tile_y = int(math.floor((iso_y / iso_plane_dimension) * self.map_dimension))
 
         return [tile_x, tile_y]</pre>
+
+</body>
+</html>

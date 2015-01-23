@@ -5,6 +5,7 @@ import sys
 from hackmap import hackmap
 from hackplayer import hackplayer
 from hackdebug import hackdebug
+import math
 
 class HackNSlash:
 
@@ -25,13 +26,15 @@ class HackNSlash:
         self.quit = False
         self.INIT_MAP = "main"
         self.INIT_PLAYER_LOCATION = [3, 3]
+        self.INIT_PLAYER_SPEED = 2.0 # should be a whole number
         
         # actually get to work here
         self.screen, self.iscreen = self.setup_screen(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
         self.clock = pygame.time.Clock()
         self.main_map = hackmap(self, self.INIT_MAP)
         self.map_surface = self.main_map.draw()
-        self.player = hackplayer(self, 3, 3)
+        self.player = hackplayer(self, self.INIT_PLAYER_LOCATION[0], self.INIT_PLAYER_LOCATION[1], \
+            self.INIT_PLAYER_SPEED)
 
     def setup_screen(self, width, height):
         # these two lines just set the game window size
@@ -56,8 +59,8 @@ class HackNSlash:
         self.iscreen.blit(self.player.image, [self.ISCREEN_WIDTH / 2, self.ISCREEN_HEIGHT / 2])
 
     def get_camera_coords(self):
-        x = (int(self.player.position[0]) - (self.ISCREEN_WIDTH / 2) + self.main_map.buffer) * -1
-        y = (int(self.player.position[1]) - (self.ISCREEN_HEIGHT / 2) + self.main_map.buffer) * -1
+        x = (math.floor(self.player.position[0]) - (self.ISCREEN_WIDTH / 2) + self.main_map.buffer) * -1
+        y = (math.floor(self.player.position[1]) - (self.ISCREEN_HEIGHT / 2) + self.main_map.buffer) * -1
         return [x, y]
 
     def flip_display(self, iscreen, screen):
@@ -91,8 +94,8 @@ class HackNSlash:
                 elif event.type == pygame.KEYDOWN: self.handle_keydown(event.key)
             self.handle_input(pygame.key.get_pressed())
             coords = self.player.get_tile_position()
-            self.debug.set_value("tile XY", str(coords[0]) + ", " + str(coords[1]))
-            self.debug.set_value("tile pixel location", str(self.main_map.get_xy_from_tile(coords[0], coords[1])))
+            #self.debug.set_value("tile XY", str(coords[0]) + ", " + str(coords[1]))
+            #self.debug.set_value("tile pixel location", str(self.main_map.get_xy_from_tile(coords[0], coords[1])))
             #current_tile_properties = self.main_map.get_tile_properties(coords[0], coords[1])
             #for key in current_tile_properties:
             #    self.debug.set_value("tile " + str(key), str(current_tile_properties[key]))

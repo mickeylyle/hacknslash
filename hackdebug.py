@@ -3,17 +3,17 @@ import pygame
 class hackdebug:
     def __init__(self, game):
         self.game = game
-        self.render = True
+        self.render = False
         self.font = pygame.font.SysFont("sans", 12)
         self.color = (255,255,255)
         self.shadow_color = (0,0,0)
         self.values = {}
 
     def set_value(self, key, value):
-        self.values[key] = value
+        self.values[key] = str(value)
 
     def text_lines(self):
-        lines = ["Debug"]
+        lines = ["-- Debug --"]
         for key in self.values:
             lines.append(str(key) + ": " + str(self.values[key]))
         return lines
